@@ -1,0 +1,68 @@
+name: Mainboard firmware release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install PlatformIO
+        run: python -m pip install platformio
+      - name: Build firmware
+        run: pio run -e esp32-s3-zero
+      - name: Prepare release
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: |
+          mkdir -p release
+          cp .pio/build/esp32-s3-zero/firmware.bin release/firmware.bin
+          python - <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+
+          version = os.environ["VERSION"]
+          binary = Path("release/firmware.bin").read_bytes()
+          manifest = {
+              "target": "ESP32-S3-Zero-KM",
+              "version": version,
+              "url": f"https://github.com/Bowi0/ESP32-S3-Zero-KM/releases/download/{version}/firmware.bin",
+              "sha256": hashlib.sha256(binary).hexdigest(),
+          }
+          Path("release/manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+          PY
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release/firmware.bin
+            release/manifest.json
+          generate_release_notes: true
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          path: manifest-repo
+      - name: Publish manifest
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: |
+          mkdir -p manifest-repo/ota
+          cp release/manifest.json manifest-repo/ota/manifest.json
+          cd manifest-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ota/manifest.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Update mainboard OTA manifest for $VERSION"
+            git push origin main
+          fi
