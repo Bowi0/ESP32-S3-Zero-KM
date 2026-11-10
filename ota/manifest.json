@@ -1,6 +1,6 @@
 {
   "target": "ESP32-S3-Zero-KM",
-  "version": "v0.1.0",
-  "url": "https://github.com/Bowi0/ESP32-S3-Zero-KM/releases/download/v0.1.0/firmware.bin",
-  "sha256": "cdfa755fc711ff84e9dd6e7f939cfb82d423ce3a72918a93f7416020a81548c3"
+  "version": "v0.1.2",
+  "url": "https://github.com/Bowi0/ESP32-S3-Zero-KM/releases/download/v0.1.2/firmware.bin",
+  "sha256": "33e0ff86baf0f66ae96ab5829efcb2b9413408a6e8702c7da81af568fc22b6b9"
 }
