@@ -19,7 +19,15 @@ jobs:
       - name: Install PlatformIO
         run: python -m pip install platformio
       - name: Build firmware
-        run: pio run -e esp32-s3-zero
+        env:
+          VERSION: ${{ github.ref_name }}
+        shell: bash
+        run: |
+          major=$(awk '/^#define MAINBOARD_VERSION_MAJOR / {print $3}' include/mainboard_version.h)
+          minor=$(awk '/^#define MAINBOARD_VERSION_MINOR / {print $3}' include/mainboard_version.h)
+          patch=$(awk '/^#define MAINBOARD_VERSION_PATCH / {print $3}' include/mainboard_version.h)
+          [[ "$VERSION" == "v$major.$minor.$patch" ]] || { echo "Tag does not match mainboard_version.h"; exit 1; }
+          pio run -e esp32-s3-zero
       - name: Prepare release
         env:
           VERSION: ${{ github.ref_name }}

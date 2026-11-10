@@ -1,0 +1,12 @@
+#ifndef MAINBOARD_VERSION_H
+#define MAINBOARD_VERSION_H
+
+#define MAINBOARD_VERSION_MAJOR 0
+#define MAINBOARD_VERSION_MINOR 1
+#define MAINBOARD_VERSION_PATCH 2
+
+#if MAINBOARD_VERSION_MAJOR > 255 || MAINBOARD_VERSION_MINOR > 255 || MAINBOARD_VERSION_PATCH > 255
+#error Mainboard version components must fit in one byte
+#endif
+
+#endif

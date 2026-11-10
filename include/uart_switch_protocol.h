@@ -7,6 +7,13 @@
 #define SWITCH_FRAME_SIZE 7
 #define SWITCH_SET 1
 #define SWITCH_ACK 2
+#define SWITCH_VERSION_REQUEST 3
+#define SWITCH_VERSION_MAJOR 4
+#define SWITCH_VERSION_MINOR 5
+#define SWITCH_VERSION_PATCH 6
+#define SWITCH_PRESSURE 7
+#define SWITCH_PRESSURE_STREAM 8
+#define SWITCH_PRESSURE_MAX_CENTIBAR 1000
 
 static inline uint16_t switch_crc16(const uint8_t *data, unsigned length)
 {
